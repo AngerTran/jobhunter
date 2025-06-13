@@ -22,6 +22,10 @@ public class UserDetailCustom implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         vn.hoidanit.jobhunter.domain.User user = userService.getUserByEmail(email);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found with email: " + email);
+
+        }
 
         String role = "ROLE_" + user.getName().toUpperCase();
 
