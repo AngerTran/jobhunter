@@ -102,7 +102,7 @@ public class SecurityUtil {
 
     /**
      * Checks if the current user has any of the authorities.
-     *
+     *`
      * @param authorities the authorities to check.
      * @return true if the current user has any of the authorities, false otherwise.
      */
