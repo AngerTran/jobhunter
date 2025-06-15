@@ -2,6 +2,7 @@ package vn.hoidanit.jobhunter;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 //disable security
 // @SpringBootApplication(exclude = {
@@ -10,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 // })
 
 @SpringBootApplication
+@EnableAspectJAutoProxy
 public class JobhunterApplication {
 
 	public static void main(String[] args) {

@@ -24,15 +24,20 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     }
 
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response,
-            AuthenticationException authException) throws IOException, ServletException {
+    public void commence(HttpServletRequest request,
+            HttpServletResponse response,
+            AuthenticationException authException)
+            throws IOException, ServletException {
 
-        ApiResponse<Object> errorResponse = new ApiResponse<>(
-                HttpStatus.UNAUTHORIZED,
-                "Unauthorized: " + authException.getMessage(),
-                null,
-                "UNAUTHORIZED_ERROR");
+        /* ------ Tạo ApiResponse thủ công ------ */
+        ApiResponse<Object> errorResponse = new ApiResponse<>();
+        errorResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
+        errorResponse.setMessage("Unauthorized: " + authException.getMessage());
+        errorResponse.setData(null);
+        errorResponse.setErrorCode("UNAUTHORIZED_ERROR");
+        // timestamp đã được khởi tạo mặc định khi new
 
+        /* ------ Gửi về client ------ */
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json;charset=UTF-8");
         mapper.writeValue(response.getWriter(), errorResponse);

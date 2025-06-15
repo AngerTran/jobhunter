@@ -1,17 +1,25 @@
 package vn.hoidanit.jobhunter.service.impl;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+
 import org.springframework.stereotype.Service;
 
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.dto.Meta;
 import vn.hoidanit.jobhunter.domain.dto.ResultPaginationDTO;
+import vn.hoidanit.jobhunter.domain.dto.ResCreateUserDTO;
+import vn.hoidanit.jobhunter.domain.dto.ResUpdateUserDTO;
+import vn.hoidanit.jobhunter.domain.dto.ResUserDTO;
 import vn.hoidanit.jobhunter.repository.UserRepository;
 import vn.hoidanit.jobhunter.service.UserService;
+import vn.hoidanit.jobhunter.util.error.IdInvalidException;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -24,7 +32,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User handelCreateUser(User user) {
-
         return userRepository.save(user);
     }
 
@@ -33,22 +40,22 @@ public class UserServiceImpl implements UserService {
         this.userRepository.deleteById(id);
     }
 
-    public ResultPaginationDTO getAllUsers(Pageable pageable) {
-        Page<User> pageUser = this.userRepository.findAll(pageable);
-        ResultPaginationDTO rs = new ResultPaginationDTO();
-        Meta mt = new Meta();
+    // public ResultPaginationDTO getAllUsers(Pageable pageable) {
+    // Page<User> pageUser = this.userRepository.findAll(pageable);
+    // ResultPaginationDTO rs = new ResultPaginationDTO();
+    // Meta mt = new Meta();
 
-        mt.setPage(pageUser.getNumber());
-        mt.setPageSize(pageUser.getSize());
+    // mt.setPage(pageUser.getNumber() + 1);
+    // mt.setPageSize(pageUser.getSize());
 
-        mt.setPages(pageUser.getTotalPages());
-        mt.setTotal(pageUser.getTotalElements());
+    // mt.setPages(pageUser.getTotalPages());
+    // mt.setTotal(pageUser.getTotalElements());
 
-        rs.setMeta(mt);
-        rs.setResult(pageUser.getContent());
+    // rs.setMeta(mt);
+    // rs.setResult(pageUser.getContent());
 
-        return rs;
-    }
+    // return rs;
+    // }
 
     @Override
     public User getUserById(Long id) {
@@ -60,16 +67,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User handelUpdateUser(User user) {
-        Optional<User> User = userRepository.findById(user.getId());
-        if (User.isPresent()) {
-            User updatedUser = User.get();
-            updatedUser.setName(user.getName());
-            updatedUser.setEmail(user.getEmail());
-            updatedUser.setPassword(user.getPassword());
-            return userRepository.save(updatedUser);
+    public ResUpdateUserDTO handelUpdateUser(ResUpdateUserDTO incoming) {
+
+        User user = this.getUserById(incoming.getId());
+        if (user == null) {
+            throw new IdInvalidException("User với id " + incoming.getId() + " không tồn tại");
         }
-        return null; // or throw an exception if user not found
+        user.setName(incoming.getName());
+        user.setAge(incoming.getAge());
+        user.setGender(incoming.getGender());
+        user.setAddress(incoming.getAddress());
+        user.setUpdatedAt(Instant.now());
+        User saved = userRepository.save(user);
+        return convertToResUpdateDTO(saved);
     }
 
     @Override
@@ -81,4 +91,69 @@ public class UserServiceImpl implements UserService {
         return null; // or throw an exception if user not found
     }
 
+    @Override
+    public ResultPaginationDTO getAllUsers(Specification<User> spec, Pageable pageable) {
+        Page<User> pageUsers = userRepository.findAll(spec, pageable);
+        ResultPaginationDTO rs = new ResultPaginationDTO();
+        Meta mt = new Meta();
+
+        mt.setPage(pageable.getPageNumber() + 1);
+        mt.setPageSize(pageable.getPageSize());
+        mt.setPages(pageUsers.getTotalPages());
+        mt.setTotal((int) pageUsers.getTotalElements());
+
+        List<ResUserDTO> listUser = pageUsers.getContent()
+                .stream()
+                .map(item -> this.convertToResUserDTO(item))
+                .collect(Collectors.toList());
+
+        rs.setMeta(mt);
+        rs.setResult(listUser);
+
+        return rs;
+    }
+
+    @Override
+    public boolean isEmailExist(String email) {
+        return this.userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public ResCreateUserDTO convertToResDTO(User user) {
+        ResCreateUserDTO dto = new ResCreateUserDTO();
+        dto.setId(user.getId());
+        dto.setName(user.getName());
+        dto.setEmail(user.getEmail());
+        dto.setAge(user.getAge());
+        dto.setGender(user.getGender());
+        dto.setAddress(user.getAddress());
+        dto.setCreatedAt(user.getCreatedAt());
+        return dto;
+    }
+
+    @Override
+    public ResUpdateUserDTO convertToResUpdateDTO(User user) {
+        ResUpdateUserDTO dto = new ResUpdateUserDTO();
+        dto.setId(user.getId());
+        dto.setName(user.getName());
+        dto.setGender(user.getGender());
+        dto.setAge(user.getAge());
+        dto.setAddress(user.getAddress());
+        dto.setUpdatedAt(user.getUpdatedAt());
+        return dto;
+    }
+
+    @Override
+    public ResUserDTO convertToResUserDTO(User user) {
+        ResUserDTO dto = new ResUserDTO();
+        dto.setId(user.getId());
+        dto.setEmail(user.getEmail());
+        dto.setName(user.getName());
+        dto.setGender(user.getGender());
+        dto.setAddress(user.getAddress());
+        dto.setAge(user.getAge());
+        dto.setUpdatedAt(user.getUpdatedAt());
+        dto.setCreatedAt(user.getCreatedAt());
+        return dto;
+    }
 }
