@@ -3,6 +3,7 @@ plugins {
 	id("org.springframework.boot") version "3.2.4"
 	id("io.spring.dependency-management") version "1.1.4"
 	id("io.freefair.lombok") version "8.6"
+	id("io.gatling.gradle") version "3.9.5.5"
 }
 
 group = "vn.hoidanit"
@@ -31,6 +32,12 @@ dependencies {
 	runtimeOnly("com.mysql:mysql-connector-j")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
+}
+
+// Gatling configuration
+gatling {
+    logLevel = "WARN"
+    logHttp = io.gatling.gradle.LogHttp.ALL
 }
 
 tasks.withType<Test> {

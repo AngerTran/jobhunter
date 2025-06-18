@@ -3,7 +3,6 @@ package vn.hoidanit.jobhunter.service;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
-import jakarta.validation.Valid;
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.dto.ResCreateUserDTO;
 import vn.hoidanit.jobhunter.domain.dto.ResUpdateUserDTO;
@@ -34,4 +33,7 @@ public interface UserService {
 
     ResUserDTO convertToResUserDTO(User user);
 
+    void updateUserToken(String email, String token);
+
+    User getUserByEmailAndRefreshToken(String email, String refreshToken);
 }

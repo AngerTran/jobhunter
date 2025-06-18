@@ -40,23 +40,6 @@ public class UserServiceImpl implements UserService {
         this.userRepository.deleteById(id);
     }
 
-    // public ResultPaginationDTO getAllUsers(Pageable pageable) {
-    // Page<User> pageUser = this.userRepository.findAll(pageable);
-    // ResultPaginationDTO rs = new ResultPaginationDTO();
-    // Meta mt = new Meta();
-
-    // mt.setPage(pageUser.getNumber() + 1);
-    // mt.setPageSize(pageUser.getSize());
-
-    // mt.setPages(pageUser.getTotalPages());
-    // mt.setTotal(pageUser.getTotalElements());
-
-    // rs.setMeta(mt);
-    // rs.setResult(pageUser.getContent());
-
-    // return rs;
-    // }
-
     @Override
     public User getUserById(Long id) {
         Optional<User> user = userRepository.findById(id);
@@ -155,5 +138,22 @@ public class UserServiceImpl implements UserService {
         dto.setUpdatedAt(user.getUpdatedAt());
         dto.setCreatedAt(user.getCreatedAt());
         return dto;
+    }
+
+    @Override
+    public void updateUserToken(String email, String token) {
+        User userOptional = this.getUserByEmail(email);
+        if (userOptional != null) {
+            userOptional.setRefreshToken(token);
+            userOptional.setUpdatedAt(Instant.now());
+            this.userRepository.save(userOptional);
+        } else {
+            throw new IdInvalidException("User with email " + email + " does not exist");
+        }
+    }
+
+    @Override
+    public User getUserByEmailAndRefreshToken(String email, String refreshToken) {
+        return this.userRepository.findByEmailAndRefreshToken(email, refreshToken);
     }
 }
