@@ -4,10 +4,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
 import vn.hoidanit.jobhunter.domain.User;
-import vn.hoidanit.jobhunter.domain.dto.ResCreateUserDTO;
-import vn.hoidanit.jobhunter.domain.dto.ResUpdateUserDTO;
-import vn.hoidanit.jobhunter.domain.dto.ResUserDTO;
-import vn.hoidanit.jobhunter.domain.dto.ResultPaginationDTO;
+import vn.hoidanit.jobhunter.domain.res.ResCreateUserDTO;
+import vn.hoidanit.jobhunter.domain.res.ResUpdateUserDTO;
+import vn.hoidanit.jobhunter.domain.res.ResUserDTO;
+import vn.hoidanit.jobhunter.domain.res.ResultPaginationDTO;
 
 public interface UserService {
 

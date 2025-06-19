@@ -10,7 +10,7 @@ import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
 import vn.hoidanit.jobhunter.domain.Company;
-import vn.hoidanit.jobhunter.domain.dto.ResultPaginationDTO;
+import vn.hoidanit.jobhunter.domain.res.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.service.CompanyService;
 
 import org.springframework.web.bind.annotation.PostMapping;

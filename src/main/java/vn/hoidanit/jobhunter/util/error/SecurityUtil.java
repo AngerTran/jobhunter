@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.nimbusds.jose.util.Base64;
 
-import vn.hoidanit.jobhunter.domain.dto.ResLoginDTO;
+import vn.hoidanit.jobhunter.domain.res.ResLoginDTO;
 
 import java.util.ArrayList;
 import java.util.Arrays;
